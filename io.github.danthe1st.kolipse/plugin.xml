@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="kt,kts"
+            id="io.github.danthe1st.kolipse.editor.kt"
+            name="io.github.danthe1st.kolipse.editor.kt">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editorContentTypeBinding
+            contentTypeId="io.github.danthe1st.kolipse.editor.kt"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="io.github.danthe1st.kolipse.editor.display.highlighting.KtPresentationReconciler"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </presentationReconciler>
+      <presentationReconciler
+            class="io.github.danthe1st.kolipse.editor.display.highlighting.KtPresentationReconciler"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </presentationReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.hoverProviders">
+      <hoverProvider
+            class="io.github.danthe1st.kolipse.editor.display.hover.KtHoverProvider"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </hoverProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.contentAssistProcessors">
+      <contentAssistProcessor
+            class="io.github.danthe1st.kolipse.editor.completion.content_assist.KtContentAssistProcessor"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </contentAssistProcessor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.autoEditStrategies">
+      <autoEditStrategy
+            class="io.github.danthe1st.kolipse.editor.completion.autocomplete.KtAutoEditStrategy"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </autoEditStrategy>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
+      <reconciler
+            class="io.github.danthe1st.kolipse.editor.display.folding.KtReconciler"
+            contentType="io.github.danthe1st.kolipse.editor.kt">
+      </reconciler>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="io.github.danthe1st.kolipse.editor.display.validation.ValidatorDocumentSetupParticipant"
+            contentTypeId="io.github.danthe1st.kolipse.editor.kt"
+            extensions="kt">
+      </participant>
+   </extension>
+	<extension
+      id="io.github.danthe1st.kolipse.compiler"
+      name="Kolipse Kotlin Compiler participant"
+      point="org.eclipse.jdt.core.compilationParticipant">
+	   <compilationParticipant
+	         class="io.github.danthe1st.kolipse.compiler.KotlinCompilationParticipant"
+	         id="KolipseKotlinCompilationParticipant"
+	         requiredSourceLevel="1.8"
+	         modifiesEnvironment="true"
+	        createsProblems="true">
+	   </compilationParticipant>
+</extension>
+ <extension
+       id="io.github.danthe1st.kolipse.KotlinNature"
+       name="Kolipse Kotlin Nature"
+       point="org.eclipse.core.resources.natures">
+    <runtime>
+       <run
+         class="io.github.danthe1st.kolipse.nature.KotlinProjectNature">
+       </run>
+    </runtime>
+    <requires-nature id="org.eclipse.jdt.core.javanature"/>
+ </extension>
+ <extension
+       id="io.github.danthe1st.kolipse.kotlincompilationerror"
+       name="Kolipse Kotlin Problem"
+       point="org.eclipse.core.resources.markers">
+     <super type="org.eclipse.jdt.core.problem"/>
+     <super type="org.eclipse.core.resources.problemmarker"/>
+     <super type="org.eclipse.core.resources.textmarker"/>
+     <persistent value="true"/>
+ </extension>
+ <extension
+       id="io.github.danthe1st.kolipse.KolipseMarkerResolution"
+       point="org.eclipse.ui.ide.markerResolution"
+       name="Kolipse Problem Marker Resolution Processor">
+    <markerResolutionGenerator
+    	markerType="io.github.danthe1st.kolipse.kotlincompilationerror"
+          class="io.github.danthe1st.kolipse.quickfix.MissingKotlinCompilerQuickFixProcessor">
+    </markerResolutionGenerator>
+ </extension>
+</plugin>
