@@ -231,5 +231,5 @@ buildNumber.properties
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,maven,java
 
 
-!io.github.danthe1st.kolipse/.project
-!io.github.danthe1st.kolipse/.classpath
+!kolipse-main/.project
+!kolipse-main/.classpath

@@ -67,6 +67,6 @@
 		</pluginManagement>
 	</build>
 	<modules>
-		<module>io.github.danthe1st.kolipse</module>
+		<module>kolipse-main</module>
 	</modules>
 </project>

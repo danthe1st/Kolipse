@@ -10,14 +10,6 @@
 	<name>Kolipse</name>
 	<description>An alternative Kotlin Plugin</description>
 	<packaging>eclipse-plugin</packaging>
-	<!--<dependencies>
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-compiler-embeddable</artifactId>
-			<version>1.7.10</version>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>-->
 	<build>
 		<plugins>
 			<plugin>
@@ -34,25 +26,6 @@
 					<log>plain</log>
 				</configuration>
 			</plugin>
-			<!--<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.1</version>
-				<executions>
-					<execution>
-					<?m2e execute?>
-						<id>extract-dependencies</id>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<phase>initialize</phase>
-						<configuration>
-							<includeScope>runtime</includeScope>
-							<outputDirectory>target/unpacked-dependencies</outputDirectory>
-							<excludes>META-INF/MANIFEST.MF,OSGI-OPT/**,META-INF/com.andgroid.tools/**,META-INF/extensions,META-INF/maven,META-INF/native,META-INF/proguard</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
