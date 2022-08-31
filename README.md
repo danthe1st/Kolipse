@@ -6,7 +6,7 @@ Kolipse is currently not published to any update site.
 
 ### Development setup
 - Install Eclipse
-- Make sure that [Eclipse PDE](https://marketplace.eclipse.org/content/eclipse-pde-plug-development-environment) is installed. It can be installed from the Eclipse Marketplace here: [![Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client](https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.svg)](http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2234530 "Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client")
+- Make sure that [Eclipse PDE](https://marketplace.eclipse.org/content/eclipse-pde-plug-development-environment) is installed. It can be installed from the Eclipse Marketplace here:<br/>[![Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client](https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.svg)](http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2234530 "Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client")
 - Make sure the m2e plugin is installed. It can be installed
 - Clone this repository
 - Import it as a Maven project including the module `io.github.danthe1st.kolipse`
