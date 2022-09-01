@@ -28,6 +28,8 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import io.github.danthe1st.kolipse.compiler.KotlinCompiler;
+
 public class KotlinProjectNature implements IProjectNature {
 	
 	private static final Bundle BUNDLE = FrameworkUtil.getBundle(KotlinProjectNature.class);
@@ -40,6 +42,8 @@ public class KotlinProjectNature implements IProjectNature {
 	
 	private Path kotlinOutputFullPath;
 	private Preferences prefs;
+	
+	private KotlinCompiler compiler;
 	
 	@Override
 	public void configure() throws CoreException {
@@ -142,6 +146,7 @@ public class KotlinProjectNature implements IProjectNature {
 	public void setKotlinCompilerPath(Path kotlinCompilerPath) throws BackingStoreException {
 		prefs.put("compiler-path", kotlinCompilerPath.toString());
 		prefs.flush();
+		compiler = null;
 	}
 	
 	public Path getKotlinCompilerPath() {
@@ -152,10 +157,20 @@ public class KotlinProjectNature implements IProjectNature {
 		}else{
 			compilerPath = Path.of(path);
 		}
-		if(Files.exists(compilerPath)){
+		if(Files.isDirectory(compilerPath)){
 			return compilerPath;
 		}else{
 			return null;
 		}
+	}
+	
+	public synchronized KotlinCompiler getKotlinCompiler() throws Exception {
+		if(compiler == null){
+			Path kotlinCompilerPath = getKotlinCompilerPath();
+			if(kotlinCompilerPath != null){
+				compiler = new KotlinCompiler(kotlinCompilerPath);
+			}
+		}
+		return compiler;
 	}
 }

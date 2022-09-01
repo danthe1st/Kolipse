@@ -3,6 +3,9 @@ package io.github.danthe1st.kolipse.editor.display.validation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -36,7 +39,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import io.github.danthe1st.kolipse.compiler.KotlinCompilationParticipant;
 import io.github.danthe1st.kolipse.nature.KotlinProjectNature;
 
 public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
@@ -50,18 +52,23 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 		private Path validateFile;
 		private Path validateOutputDir;
 		
-		private ExecutorService compilerPool = new ThreadPoolExecutor(0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>() {
-			@Override
-			public void put(Runnable e) throws InterruptedException {
-				clear();
-				super.put(e);
-			}
-		}, r -> {
-			Thread t = new Thread(r);
-			t.setDaemon(true);
-			t.setName("Kolipse Kotlin compiler thread");
-			return t;
-		});
+		private ExecutorService compilerControlPool = createCompilerThreadPool();
+		private ExecutorService compilerRunPool = createCompilerThreadPool();
+		
+		private ExecutorService createCompilerThreadPool() {
+			return new ThreadPoolExecutor(0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>() {
+				@Override
+				public void put(Runnable e) throws InterruptedException {
+					clear();
+					super.put(e);
+				}
+			}, r -> {
+				Thread t = new Thread(r);
+				t.setDaemon(true);
+				t.setName("Kolipse Kotlin compiler thread");
+				return t;
+			});
+		}
 		
 		public DocumentValidator(IFile file) throws IOException {
 			this.file = file;
@@ -111,7 +118,7 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 					marker.setAttribute(IMarker.LINE_NUMBER, 0);
 					marker.setAttribute(IMarker.CHAR_END, event.getDocument().getLength());
 				}else{
-					compilerPool.execute(() -> tryCompileAndDisplayErrors(event, project));
+					compilerControlPool.execute(() -> tryCompileAndDisplayErrors(event, kotlinProjectNature, project));
 				}
 			}catch(CoreException e){
 				e.printStackTrace();
@@ -140,19 +147,19 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 			}
 		}
 		
-		private void tryCompileAndDisplayErrors(DocumentEvent event, IJavaProject project) {
+		private void tryCompileAndDisplayErrors(DocumentEvent event, KotlinProjectNature nature, IJavaProject project) {
 			try{
 				Files.writeString(validateFile, event.getDocument().get());
 				String validateFilePath = validateFile.normalize().toString();
-				Process process = KotlinCompilationParticipant.compile(project, Collections.singletonList(validateFilePath), validateOutputDir, List.of("-Xno-optimize", "-Xno-optimized-callable-references"));
-				try{
-					process.waitFor();
-				}catch(InterruptedException e){
-					Thread.currentThread().interrupt();
-					process.destroy();
-				}
+				PipedInputStream pis = new PipedInputStream();
+				PipedOutputStream pos = new PipedOutputStream(pis);
+				compilerRunPool.submit(() -> {
+					try(PrintStream out = new PrintStream(pos)){
+						return nature.getKotlinCompiler().compile(out, project, Collections.singletonList(validateFilePath), validateOutputDir, List.of("-Xno-optimize", "-Xno-optimized-callable-references"));
+					}
+				});
 				removeMarkers();
-				try(BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()))){
+				try(BufferedReader br = new BufferedReader(new InputStreamReader(pis))){
 					String line;
 					while((line = br.readLine()) != null){
 						if(line.startsWith(validateFilePath + ":")){
