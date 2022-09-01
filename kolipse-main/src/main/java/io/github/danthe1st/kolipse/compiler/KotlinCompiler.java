@@ -1,5 +1,6 @@
 package io.github.danthe1st.kolipse.compiler;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandle;
@@ -28,7 +29,7 @@ public class KotlinCompiler {
 	private MethodHandle cliToolExec;
 	private MethodHandle k2JvmConstructor;
 	
-	public KotlinCompiler(Path compilerPath) throws Exception {
+	public KotlinCompiler(Path compilerPath) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, IOException {
 		Path libDir = compilerPath.resolve("lib");
 		URL[] urls;
 		try(Stream<Path> s = Files.list(libDir)){

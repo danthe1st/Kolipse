@@ -52,10 +52,10 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 		private Path validateFile;
 		private Path validateOutputDir;
 		
-		private ExecutorService compilerControlPool = createCompilerThreadPool();
-		private ExecutorService compilerRunPool = createCompilerThreadPool();
+		private static ExecutorService compilerControlPool = createCompilerThreadPool();
+		private static ExecutorService compilerRunPool = createCompilerThreadPool();
 		
-		private ExecutorService createCompilerThreadPool() {
+		private static ExecutorService createCompilerThreadPool() {
 			return new ThreadPoolExecutor(0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>() {
 				@Override
 				public void put(Runnable e) throws InterruptedException {
