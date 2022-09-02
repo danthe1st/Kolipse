@@ -1,5 +1,6 @@
 package io.github.danthe1st.kolipse.compiler;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
@@ -23,11 +24,11 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import io.github.danthe1st.kolipse.nature.KotlinProjectNature;
 
-public class KotlinCompiler {
+public class KotlinCompiler implements Closeable {
 	
-	private final URLClassLoader compilerLoader;
 	private MethodHandle cliToolExec;
 	private MethodHandle k2JvmConstructor;
+	private URLClassLoader compilerLoader;
 	
 	public KotlinCompiler(Path compilerPath) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, IOException {
 		Path libDir = compilerPath.resolve("lib");
@@ -138,5 +139,10 @@ public class KotlinCompiler {
 			}
 		}
 		return argBuilder.toString();
+	}
+	
+	@Override
+	public void close() throws IOException {
+		compilerLoader.close();
 	}
 }

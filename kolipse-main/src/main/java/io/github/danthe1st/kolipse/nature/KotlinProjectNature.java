@@ -28,6 +28,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import io.github.danthe1st.kolipse.KolipsePlugin;
 import io.github.danthe1st.kolipse.compiler.KotlinCompiler;
 
 public class KotlinProjectNature implements IProjectNature {
@@ -168,7 +169,7 @@ public class KotlinProjectNature implements IProjectNature {
 		if(compiler == null){
 			Path kotlinCompilerPath = getKotlinCompilerPath();
 			if(kotlinCompilerPath != null){
-				compiler = new KotlinCompiler(kotlinCompilerPath);
+				compiler = KolipsePlugin.getInstance().getKotlinCompiler(getKotlinCompilerPath());
 			}
 		}
 		return compiler;
