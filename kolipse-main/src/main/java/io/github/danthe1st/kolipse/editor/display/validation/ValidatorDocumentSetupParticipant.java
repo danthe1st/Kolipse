@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -131,11 +132,15 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 		}
 		
 		private IMarker createProblemMarker(int severity, String msg) throws CoreException {
-			IMarker marker = file.createMarker(KotlinProjectNature.KOLIPSE_MARKER_ID);
+			IMarker marker = file.createMarker(
+					KotlinProjectNature.KOLIPSE_MARKER_ID,
+					Map.of(
+							MARKER_ATTRIBUTE, true,
+							IMarker.SEVERITY, severity,
+							IMarker.MESSAGE, msg
+					)
+			);
 			markers.add(marker);
-			marker.setAttribute(MARKER_ATTRIBUTE, true);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			marker.setAttribute(IMarker.MESSAGE, msg);
 			return marker;
 		}
 		

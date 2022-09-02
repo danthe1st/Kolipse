@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -90,12 +91,16 @@ public class KotlinCompilationParticipant extends CompilationParticipant {
 							PrintStream ps = new PrintStream(baos)){
 						String result = kotlinNature.getKotlinCompiler().compile(ps, project, kotlinSources, kotlinNature.getKotlinOutputFullPath(), Collections.emptyList());
 						if(!"OK".equals(result)){
-							IMarker marker = project.getProject().createMarker("org.eclipse.jdt.core.problem");
+							IMarker marker = project.getProject().createMarker(
+									"org.eclipse.jdt.core.problem",
+									Map.of(
+											MARKER_ATTRIBUTE, true,
+											IMarker.SEVERITY, IMarker.SEVERITY_ERROR,
+											IMarker.MESSAGE, "Kolipse: Compiling Kotlin code failed with result '" + result + "'. See the full error description for details.\n" + new String(baos.toByteArray()),
+											IJavaModelMarker.ID, IProblem.ExternalProblemNotFixable
+									)
+							);
 							markers.add(marker);
-							marker.setAttribute(MARKER_ATTRIBUTE, true);
-							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-							marker.setAttribute(IMarker.MESSAGE, "Kolipse: Compiling Kotlin code failed with result '" + result + "'. See the full error description for details.\n" + new String(baos.toByteArray()));
-							marker.setAttribute(IJavaModelMarker.ID, IProblem.ExternalProblemNotFixable);
 						}
 					}catch(CoreException e){
 						throw new RuntimeException(e);

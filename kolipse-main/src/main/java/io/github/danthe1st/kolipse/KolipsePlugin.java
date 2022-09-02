@@ -57,8 +57,7 @@ public class KolipsePlugin extends Plugin {
 		try{
 			return compilers.computeIfAbsent(compilerPath, p -> {
 				try{
-					KotlinCompiler compiler = new KotlinCompiler(compilerPath);
-					return compiler;
+					return new KotlinCompiler(compilerPath);
 				}catch(ClassNotFoundException | NoSuchMethodException | IllegalAccessException | IOException e){
 					throw new WrapperException(e);
 				}
